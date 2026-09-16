@@ -1,32 +1,76 @@
 import Link from "next/link";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { ArrowRightIcon, ArrowUpRightIcon } from "./ui/Icons";
+import { Badge } from "./ui/Badge";
+import { ArrowRightIcon, ArrowUpRightIcon, GitHubIcon } from "./ui/Icons";
 
-/** Editorial project row: number, title, stack, one sentence, links. */
+export const statusLabel: Record<Project["status"], string> = {
+  active: "In development",
+  completed: "Completed",
+  prototype: "Prototype",
+  draft: "Draft",
+};
+
+/** "owner/repo" from a GitHub URL, for the small repo indicator. */
+export function repoPath(url: string): string {
+  return url.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
+}
+
+/**
+ * Project card for the two-column grid. Number, status, title, one sentence,
+ * a mini data-flow derived from the verified architecture, tags, and links.
+ */
 export function ProjectItem({ project }: { project: Project }) {
   const href = `/projects/${project.slug}`;
+  const flow = project.caseStudy.architecture.diagram.nodes.slice(0, 4).map((n) => n.label);
+
   return (
-    <li className="group">
-      <article className="grid gap-4 py-8 sm:grid-cols-[56px_1fr] sm:gap-6">
-        <p
-          aria-hidden="true"
-          className="font-mono text-sm text-fg-faint transition-transform duration-300 ease-out-quart group-hover:translate-x-1"
-        >
-          {project.number}
-        </p>
-        <div className="min-w-0">
-          <h3 className="text-lg font-medium tracking-tight text-fg">
-            <Link href={href} className="link-underline">
-              {project.title}
-            </Link>
-          </h3>
-          <p className="mt-1.5 font-mono text-xs text-fg-faint">
-            {project.technologies.join(" · ")}
+    <li className="group card card-hover flex h-full min-w-0 flex-col p-6 sm:p-7">
+      <article className="flex h-full min-w-0 flex-col">
+        <header className="flex items-center justify-between gap-4">
+          <span className="font-mono text-sm text-fg-faint transition-transform duration-300 ease-out-quart group-hover:translate-x-1">
+            {project.number}
+          </span>
+          <div className="flex items-center gap-2">
+            {project.type === "internship" ? <Badge>Internship</Badge> : null}
+            <Badge dot={project.status === "active"}>{statusLabel[project.status]}</Badge>
+          </div>
+        </header>
+
+        <h3 className="mt-5 text-xl font-semibold tracking-tight text-fg">
+          <Link href={href} className="link-underline">
+            {project.title}
+          </Link>
+        </h3>
+        <p className="mt-3 text-sm leading-relaxed text-fg-muted">{project.tagline}</p>
+
+        {flow.length > 1 ? (
+          <p
+            aria-label="Data flow"
+            className="mt-5 flex flex-wrap items-center gap-x-1.5 gap-y-1 rounded-md border border-border bg-bg-subtle px-3 py-2 font-mono text-[11px] text-fg-muted"
+          >
+            {flow.map((label, index) => (
+              <span key={label} className="inline-flex items-center gap-1.5">
+                {index > 0 ? (
+                  <span aria-hidden="true" className="text-fg-faint">
+                    →
+                  </span>
+                ) : null}
+                {label}
+              </span>
+            ))}
           </p>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-fg-muted">{project.tagline}</p>
-          <ProjectLinks project={project} />
-        </div>
+        ) : null}
+
+        <ul aria-label="Technologies" className="mt-5 flex flex-wrap gap-2">
+          {project.technologies.map((tech) => (
+            <li key={tech}>
+              <Badge tone="outline">{tech}</Badge>
+            </li>
+          ))}
+        </ul>
+
+        <ProjectLinks project={project} className="mt-auto border-t border-border pt-5" />
       </article>
     </li>
   );
@@ -35,25 +79,28 @@ export function ProjectItem({ project }: { project: Project }) {
 export function ProjectLinks({ project, className }: { project: Project; className?: string }) {
   const href = `/projects/${project.slug}`;
   return (
-    <div className={cn("mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm", className)}>
+    <div className={cn("mt-6 flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-3 text-sm", className)}>
       <Link
         href={href}
-        className="inline-flex items-center gap-1.5 text-fg transition-colors hover:text-accent"
+        className="group/link inline-flex items-center gap-1.5 font-medium text-fg transition-colors hover:text-accent"
       >
-        <ArrowRightIcon className="h-3.5 w-3.5 transition-transform duration-300 ease-out-quart group-hover:translate-x-0.5" />
         {project.ctaLabel ?? "View Case Study"}
+        <ArrowRightIcon className="h-3.5 w-3.5 transition-transform duration-300 ease-out-quart group-hover/link:translate-x-0.5" />
       </Link>
       {project.github ? (
         <a
           href={project.github}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 text-fg-muted transition-colors hover:text-fg"
+          className="inline-flex min-w-0 max-w-full items-center gap-1.5 font-mono text-xs text-fg-muted transition-colors hover:text-fg"
         >
-          <ArrowUpRightIcon className="h-3.5 w-3.5" />
-          GitHub
+          <GitHubIcon className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">{repoPath(project.github)}</span>
+          <ArrowUpRightIcon className="h-3 w-3 shrink-0 text-fg-faint" />
         </a>
-      ) : null}
+      ) : (
+        <span className="font-mono text-xs text-fg-faint">source not public</span>
+      )}
     </div>
   );
 }

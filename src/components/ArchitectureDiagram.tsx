@@ -24,7 +24,7 @@ export function ArchitectureDiagram({ data, title, className }: ArchitectureDiag
     <figure className={cn("w-full", className)} aria-label={title}>
       <ol
         className={cn(
-          "flex flex-col",
+          "reveal-stagger flex flex-col",
           horizontal && "md:flex-row md:items-stretch",
         )}
       >
@@ -37,7 +37,7 @@ export function ArchitectureDiagram({ data, title, className }: ArchitectureDiag
             >
               <div
                 className={cn(
-                  "flex-1 rounded-md border border-border bg-bg-elevated p-4",
+                  "card flex-1 p-4 transition-colors hover:border-border-strong",
                   horizontal ? "md:min-w-0" : "sm:flex sm:gap-6",
                 )}
               >

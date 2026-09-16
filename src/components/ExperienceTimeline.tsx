@@ -4,17 +4,17 @@ import { Container } from "./ui/Container";
 import { Reveal } from "./ui/Reveal";
 
 /**
- * Experience. Full-width section (no side column) with a prominent heading,
- * a numbered list of roles, and a hairline divider between entries.
+ * Experience. Full-width section with a prominent heading and a numbered
+ * timeline of roles, each in its own panel.
  */
 export function ExperienceTimeline() {
   return (
     <section
       id="experience"
       aria-labelledby="experience-title"
-      className="border-t border-border bg-bg-subtle py-16 sm:py-24"
+      className="relative border-t border-border bg-bg-subtle py-20 sm:py-28"
     >
-      <Container>
+      <Container className="relative">
         <Reveal>
           <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -34,9 +34,14 @@ export function ExperienceTimeline() {
         </Reveal>
 
         <Reveal>
-          <ol className="mt-10 border-t border-border sm:mt-14">
+          <ol className="reveal-stagger mt-12 space-y-10 sm:mt-16">
             {experience.map((role, index) => (
-              <ExperienceItem key={`${role.company}-${role.role}`} role={role} index={index} />
+              <ExperienceItem
+                key={`${role.company}-${role.role}`}
+                role={role}
+                index={index}
+                isLast={index === experience.length - 1}
+              />
             ))}
           </ol>
         </Reveal>

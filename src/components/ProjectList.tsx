@@ -1,43 +1,46 @@
 import Link from "next/link";
 import { publishedProjects } from "@/data/projects";
 import type { Project } from "@/lib/types";
-import { ProjectItem, ProjectLinks } from "./ProjectItem";
+import { PipelineDiagram } from "./PipelineDiagram";
+import { ProjectItem, ProjectLinks, statusLabel } from "./ProjectItem";
+import { Badge } from "./ui/Badge";
 import { Container } from "./ui/Container";
 import { Reveal } from "./ui/Reveal";
 
 /**
- * Featured Projects. The flagship project gets a larger editorial block with
- * its pipeline; the rest are compact rows. Full-width section (no side
- * column) so the list has room.
+ * Featured Projects: one large flagship panel with its pipeline, then the
+ * remaining projects in a two-column grid.
  */
 export function ProjectList() {
   const featured = publishedProjects.find((p) => p.featured);
   const rest = publishedProjects.filter((p) => p !== featured);
 
   return (
-    <section id="projects" aria-labelledby="projects-title" className="border-t border-border py-16 sm:py-24">
+    <section id="projects" aria-labelledby="projects-title" className="border-t border-border py-20 sm:py-28">
       <Container>
         <Reveal>
-          <header className="max-w-2xl">
-            <p className="font-mono text-xs tracking-wide text-fg-faint">03 — Featured Projects</p>
-            <h2 id="projects-title" className="mt-2 text-xl font-semibold tracking-tight text-fg sm:text-2xl">
-              Projects
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-fg-muted">
-              Descriptions are written from the actual repositories. Each case study links to the
-              source where it is public.
+          <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="font-mono text-xs tracking-wide text-fg-faint">03 — Featured Projects</p>
+              <h2 id="projects-title" className="mt-2 text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
+                Projects
+              </h2>
+            </div>
+            <p className="max-w-md text-sm leading-relaxed text-fg-muted sm:text-right">
+              Written from the actual repositories. Each case study links to the source where it is
+              public.
             </p>
           </header>
         </Reveal>
 
         {featured ? (
-          <Reveal className="mt-10">
+          <Reveal className="mt-12 sm:mt-16">
             <FeaturedProject project={featured} />
           </Reveal>
         ) : null}
 
         <Reveal>
-          <ol className="mt-4 divide-y divide-border border-t border-border">
+          <ol className="reveal-stagger mt-5 grid gap-5 md:grid-cols-2">
             {rest.map((project) => (
               <ProjectItem key={project.slug} project={project} />
             ))}
@@ -51,54 +54,58 @@ export function ProjectList() {
 function FeaturedProject({ project }: { project: Project }) {
   const href = `/projects/${project.slug}`;
   return (
-    <article className="group rounded-lg border border-border bg-bg-subtle p-6 transition-colors hover:border-border-strong sm:p-8">
-      <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:gap-12">
-        <div className="min-w-0">
-          <p className="flex items-center gap-3 font-mono text-xs text-fg-faint">
-            <span className="transition-transform duration-300 ease-out-quart group-hover:translate-x-1">
-              {project.number}
-            </span>
-            <span>Flagship</span>
-          </p>
-          <h3 className="mt-3 text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
-            <Link href={href} className="link-underline">
-              {project.title}
-            </Link>
-          </h3>
-          <p className="mt-2 font-mono text-xs text-fg-faint">{project.technologies.join(" · ")}</p>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-fg-muted">{project.tagline}</p>
+    <article className="group card card-hover relative overflow-hidden">
+      {/* Faint dot texture on the panel header only. */}
+      <div aria-hidden="true" className="bg-dots absolute inset-x-0 top-0 h-40 opacity-40 [mask-image:linear-gradient(to_bottom,black,transparent)]" />
 
-          {project.summaryFlow ? (
-            <ol
-              aria-label="Pipeline"
-              className="mt-6 flex flex-wrap items-center gap-y-2 font-mono text-xs text-fg-muted"
-            >
-              {project.summaryFlow.map((step, index) => (
-                <li key={step} className="flex items-center">
-                  <span className="rounded border border-border bg-bg px-2 py-1">{step}</span>
-                  {index < project.summaryFlow!.length - 1 ? (
-                    <span aria-hidden="true" className="px-1.5 text-fg-faint">
-                      →
-                    </span>
-                  ) : null}
+      <div className="relative p-6 sm:p-8 lg:p-10">
+        <div className="grid gap-8 lg:grid-cols-[1fr_260px] lg:gap-12">
+          <div className="min-w-0">
+            <p className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-sm text-fg-faint transition-transform duration-300 ease-out-quart group-hover:translate-x-1">
+                {project.number}
+              </span>
+              <Badge tone="accent">Flagship</Badge>
+              <Badge dot={project.status === "active"}>{statusLabel[project.status]}</Badge>
+              {project.year ? <Badge>{project.year}</Badge> : null}
+            </p>
+            <h3 className="mt-5 text-2xl font-semibold tracking-tight text-fg sm:text-3xl lg:text-[2.1rem] lg:leading-tight">
+              <Link href={href} className="link-underline">
+                {project.title}
+              </Link>
+            </h3>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-fg-muted">{project.tagline}</p>
+            <ul aria-label="Technologies" className="mt-5 flex flex-wrap gap-2">
+              {project.technologies.map((tech) => (
+                <li key={tech}>
+                  <Badge tone="outline">{tech}</Badge>
                 </li>
               ))}
-            </ol>
-          ) : null}
+            </ul>
+          </div>
 
-          <ProjectLinks project={project} className="mt-6" />
+          {project.highlights ? (
+            <dl className="grid h-fit grid-cols-2 gap-x-6 gap-y-4 border-t border-border pt-5 font-mono text-xs lg:grid-cols-1 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+              {project.highlights.map((h) => (
+                <div key={h.label}>
+                  <dt className="text-fg-faint">{h.label}</dt>
+                  <dd className="mt-1 text-fg">{h.value}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
         </div>
 
-        {project.highlights ? (
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 self-start border-t border-border pt-4 font-mono text-xs lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
-            {project.highlights.map((h) => (
-              <div key={h.label} className="contents">
-                <dt className="text-fg-faint">{h.label}</dt>
-                <dd className="text-fg-muted">{h.value}</dd>
-              </div>
-            ))}
-          </dl>
+        {project.pipeline ? (
+          <div className="mt-8 rounded-lg border border-border bg-bg-subtle px-5 py-5 sm:px-6">
+            <p className="mb-5 font-mono text-[11px] tracking-[0.12em] text-fg-faint uppercase">
+              Implemented pipeline
+            </p>
+            <PipelineDiagram steps={project.pipeline} />
+          </div>
         ) : null}
+
+        <ProjectLinks project={project} className="mt-6" />
       </div>
     </article>
   );

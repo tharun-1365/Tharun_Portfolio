@@ -1,29 +1,42 @@
 import { skills } from "@/data/skills";
+import { Badge } from "./ui/Badge";
 import { Section } from "./ui/Section";
 
-/** Categorised skill lists. No bars, no percentages. */
+/** Three grouped panels: mono heading, tags, and a line of evidence. No bars. */
 export function Skills() {
   return (
-    <Section id="skills" eyebrow="04 — Skills" title="Skills">
-      <dl className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
-        {skills.map((group) => (
-          <div key={group.category}>
-            <dt className="font-mono text-xs tracking-wide text-fg-faint">{group.category}</dt>
-            <dd className="mt-3">
-              <ul className="flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded-md border border-border px-2.5 py-1 text-sm text-fg"
-                  >
+    <Section
+      id="skills"
+      eyebrow="04 — Skills"
+      title="Skills"
+      lead="Grouped by how they show up in the work above. Every tag maps to a project or internship on this page."
+      layout="stack"
+      surface="subtle"
+    >
+      <div className="reveal-stagger grid gap-4 md:grid-cols-3">
+        {skills.map((group, index) => (
+          <article key={group.category} className="card card-hover flex flex-col p-6">
+            <header className="flex items-center justify-between">
+              <h3 className="font-mono text-xs tracking-[0.12em] text-fg-faint uppercase">{group.category}</h3>
+              <span className="font-mono text-[11px] text-fg-faint">{String(index + 1).padStart(2, "0")}</span>
+            </header>
+            <ul className="mt-5 mb-6 flex flex-wrap gap-2">
+              {group.items.map((item) => (
+                <li key={item}>
+                  <Badge tone="outline" className="h-7 px-2.5 text-xs">
                     {item}
-                  </li>
-                ))}
-              </ul>
-            </dd>
-          </div>
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+            {group.evidence ? (
+              <p className="mt-auto border-t border-border pt-4 text-xs leading-relaxed text-fg-faint">
+                {group.evidence}
+              </p>
+            ) : null}
+          </article>
         ))}
-      </dl>
+      </div>
     </Section>
   );
 }

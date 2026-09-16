@@ -47,7 +47,7 @@ Types for every entry are in `src/lib/types.ts`. Components never hard-code cont
 Each entry in `projects.ts` drives both the list on the home page and its case study at `/projects/<slug>`. Display numbers (01, 02, …) are assigned by position, so reordering the array reorders the site.
 
 - `status: "draft"` hides an entry everywhere (list, routes, sitemap) — useful for a project whose details are not confirmed yet.
-- `featured: true` gives one project the larger flagship block with `summaryFlow` and `highlights`.
+- `featured: true` gives one project the larger flagship panel with its `pipeline` (drawn by `PipelineDiagram`) and `highlights`.
 - `caseStudy.testing` is optional; when present it adds a "Testing" tab.
 - `caseStudy.architecture.diagram` feeds the reusable `ArchitectureDiagram` component: a list of nodes rendered as a flow. `direction: "auto"` is horizontal on wide screens when there are five nodes or fewer, otherwise vertical.
 - Omit `github` for work without public source (e.g. the Report Optimizer internship project) and use `sourceNote` to say why.
@@ -67,12 +67,16 @@ src/
   components/
     Navbar, ThemeToggle, ThemeScript, Hero, ProfileImage, About, Skills,
     ExperienceTimeline, ExperienceItem, ProjectList, ProjectItem,
-    ProjectCaseStudy, CaseStudyTabs, ArchitectureDiagram, TechStack,
-    Education, Contact, Footer
-    ui/                     Container, Section, Reveal, Button, Icons
+    ProjectCaseStudy, CaseStudyTabs, ArchitectureDiagram, PipelineDiagram,
+    TechStack, Education, Contact, Footer
+    ui/                     Container, Section, Reveal, Button, Badge, Icons
   data/                     all content
   lib/                      types, asset checks, hooks, utils
 ```
+
+## Visual system
+
+Surfaces alternate between `bg` and `bg-subtle`; panels use the `.card` class (hairline border, lift on hover via `.card-hover`); `.bg-grid` / `.bg-dots` add faint engineering textures to the hero, the flagship panel and the contact panel. Lists and grids inside a `Reveal` can use `.reveal-stagger` for a staggered entrance. All of it is plain CSS in `globals.css`.
 
 ## Theme
 

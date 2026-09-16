@@ -138,6 +138,104 @@ html.theme-transition * {
   }
 }
 
+/* Staggered reveal for lists/grids: children fade in one after another. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 500ms var(--ease-out-quart),
+      transform 500ms var(--ease-out-quart);
+  }
+
+  .js .reveal.is-visible .reveal-stagger > *,
+  .js .reveal-stagger.is-visible > * {
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal-stagger > :nth-child(1) { transition-delay: 40ms; }
+  .reveal-stagger > :nth-child(2) { transition-delay: 100ms; }
+  .reveal-stagger > :nth-child(3) { transition-delay: 160ms; }
+  .reveal-stagger > :nth-child(4) { transition-delay: 220ms; }
+  .reveal-stagger > :nth-child(5) { transition-delay: 280ms; }
+  .reveal-stagger > :nth-child(6) { transition-delay: 340ms; }
+  .reveal-stagger > :nth-child(7) { transition-delay: 400ms; }
+  .reveal-stagger > :nth-child(8) { transition-delay: 460ms; }
+}
+
+/* ------------------------------------------------------------------
+   Surfaces
+   ------------------------------------------------------------------ */
+
+/* Faint engineering grid. Line colour is the border token, so it adapts
+   to both themes; the mask fades it out towards the bottom. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bg-grid-fade {
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 95%);
+  mask-image: linear-gradient(to bottom, black 0%, black 30%, transparent 95%);
+}
+
+.bg-dots {
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Interactive panel: hairline border, lifts slightly on hover. */
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  transition:
+    border-color 220ms var(--ease-out-quart),
+    box-shadow 220ms var(--ease-out-quart),
+    transform 220ms var(--ease-out-quart);
+}
+
+.card-hover:hover,
+.card-hover:focus-within {
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.18);
+  transform: translateY(-2px);
+}
+
+.dark .card-hover:hover,
+.dark .card-hover:focus-within,
+.surface-dark .card-hover:hover,
+.surface-dark .card-hover:focus-within {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+}
+
+/* Corner ticks used to frame the portrait. */
+.frame-ticks::before,
+.frame-ticks::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--border-strong);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.frame-ticks::before {
+  top: -7px;
+  left: -7px;
+  border-width: 1px 0 0 1px;
+}
+
+.frame-ticks::after {
+  bottom: -7px;
+  right: -7px;
+  border-width: 0 1px 1px 0;
+}
+
 /* Underline that draws in on hover for inline text links. */
 .link-underline {
   background-image: linear-gradient(currentColor, currentColor);

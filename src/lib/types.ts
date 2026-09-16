@@ -56,8 +56,8 @@ export interface Project {
   organization?: string;
   /** Larger presentation in the project list. Use once. */
   featured?: boolean;
-  /** Short flow (≤ 6 steps) shown inline on the featured card. */
-  summaryFlow?: string[];
+  /** Pipeline (≤ 6 steps) drawn on the featured card. Labels/details must be verified. */
+  pipeline?: { label: string; detail: string }[];
   /** A few verified facts shown on the featured card, e.g. "217 tests". */
   highlights?: { label: string; value: string }[];
   github?: string;
@@ -92,6 +92,8 @@ export interface ExperienceRole {
   status?: "completed";
   /** Verified responsibilities only. */
   points: string[];
+  /** Technologies named in the confirmed responsibilities. */
+  tags?: string[];
   /** Optional link to a related case study on this site. */
   related?: { label: string; href: string };
 }
@@ -99,6 +101,8 @@ export interface ExperienceRole {
 export interface SkillGroup {
   category: string;
   items: string[];
+  /** Where these skills are evidenced on this site (projects / internships). */
+  evidence?: string;
 }
 
 export interface EducationEntry {

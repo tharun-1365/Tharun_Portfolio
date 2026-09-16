@@ -23,13 +23,13 @@ export const projects: Project[] = [
     status: "active",
     year: "2026",
     featured: true,
-    summaryFlow: [
-      "Gameplay",
-      "Recording",
-      "Replay data",
-      "Deterministic playback",
-      "Validation",
-      "QA analysis",
+    pipeline: [
+      { label: "Gameplay", detail: "BenchGame · 2D platformer" },
+      { label: "Replay Recording", detail: "ReplayRecorder · FixedUpdate" },
+      { label: "Replay Data", detail: "replay.json · events.jsonl" },
+      { label: "Validation", detail: "ReplayValidator · TrajectoryComparer" },
+      { label: "QA Oracles", detail: "5 rule-based oracles" },
+      { label: "Analysis", detail: "FeatureExtractor · AnalysisEngine" },
     ],
     highlights: [
       { label: "engine", value: "Unity 6.3 LTS" },
@@ -329,7 +329,7 @@ export const projects: Project[] = [
     title: "Report Optimizer",
     tagline:
       "An internal tool built during a technical support internship to organise, structure, and reformat reports so the useful data is easier to read and act on.",
-    technologies: ["Internship Project", "Automation", "Data Processing"],
+    technologies: ["Automation", "Data Processing", "Report Formatting"],
     type: "internship",
     status: "completed",
     organization: "Intellect Design Arena",

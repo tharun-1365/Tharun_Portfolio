@@ -3,21 +3,17 @@ import type { ReactNode } from "react";
 import type { Project } from "@/lib/types";
 import { ArchitectureDiagram } from "./ArchitectureDiagram";
 import { CaseStudyTabs, type CaseStudyTab } from "./CaseStudyTabs";
+import { repoPath, statusLabel } from "./ProjectItem";
 import { TechStack } from "./TechStack";
+import { Badge } from "./ui/Badge";
 import { Container } from "./ui/Container";
+import { Reveal } from "./ui/Reveal";
 import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, GitHubIcon } from "./ui/Icons";
 
 const typeLabel: Record<Project["type"], string> = {
   "open-source": "Open source",
   internship: "Internship project",
   academic: "Academic project",
-};
-
-const statusLabel: Record<Project["status"], string> = {
-  active: "In development",
-  completed: "Completed",
-  prototype: "Prototype",
-  draft: "Draft",
 };
 
 interface ProjectCaseStudyProps {
@@ -99,23 +95,34 @@ export function ProjectCaseStudy({ project, previous, next }: ProjectCaseStudyPr
         </Link>
 
         <header className="mt-8 max-w-3xl">
-          <p className="font-mono text-xs tracking-wide text-fg-faint">
-            {project.number} · {metaParts.join(" · ")}
+          <p className="flex flex-wrap items-center gap-2 font-mono text-xs text-fg-faint">
+            <span>{project.number}</span>
+            {metaParts.map((part) => (
+              <Badge key={part} dot={part === statusLabel.active}>
+                {part}
+              </Badge>
+            ))}
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-fg sm:text-4xl">{project.title}</h1>
           <p className="mt-4 text-base leading-relaxed text-fg-muted sm:text-lg">{project.tagline}</p>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <p className="font-mono text-xs text-fg-faint">{project.technologies.join(" · ")}</p>
+            <ul aria-label="Technologies" className="flex flex-wrap gap-2">
+              {project.technologies.map((tech) => (
+                <li key={tech}>
+                  <Badge tone="outline">{tech}</Badge>
+                </li>
+              ))}
+            </ul>
             {project.github ? (
               <a
                 href={project.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-8 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-fg transition-colors hover:border-border-strong hover:bg-bg-subtle"
+                className="inline-flex h-8 items-center gap-2 rounded-md border border-border px-3 font-mono text-xs text-fg transition-colors hover:border-border-strong hover:bg-bg-subtle"
               >
                 <GitHubIcon className="h-3.5 w-3.5" />
-                View on GitHub
+                {repoPath(project.github)}
                 <ArrowUpRightIcon className="h-3 w-3 text-fg-faint" />
               </a>
             ) : null}
@@ -139,9 +146,9 @@ export function ProjectCaseStudy({ project, previous, next }: ProjectCaseStudyPr
           ) : null}
         </header>
 
-        <div className="mt-12 max-w-4xl">
+        <Reveal className="mt-12 max-w-4xl">
           <CaseStudyTabs tabs={tabs} />
-        </div>
+        </Reveal>
 
         <nav aria-label="Other projects" className="mt-20 grid gap-4 border-t border-border pt-8 sm:grid-cols-2">
           {previous ? (
@@ -161,7 +168,7 @@ function AdjacentLink({ project, direction }: { project: Project; direction: "pr
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className={`group flex flex-col gap-1 rounded-md border border-border p-4 transition-colors hover:border-border-strong ${isNext ? "sm:items-end sm:text-right" : ""}`}
+      className={`group card card-hover flex flex-col gap-1 p-4 ${isNext ? "sm:items-end sm:text-right" : ""}`}
     >
       <span className="inline-flex items-center gap-1 font-mono text-xs text-fg-faint">
         {!isNext ? <ArrowLeftIcon className="h-3 w-3" /> : null}

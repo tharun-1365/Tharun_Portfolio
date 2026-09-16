@@ -10,36 +10,64 @@ interface SectionProps {
   title: string;
   /** Optional one-line lead under the title. */
   lead?: string;
+  /** "split": heading column + content column on wide screens. "stack": heading above content. */
+  layout?: "split" | "stack";
+  /** Alternate surface tone so consecutive sections read as distinct bands. */
+  surface?: "base" | "subtle";
   children: ReactNode;
   className?: string;
 }
 
 /**
- * Standard page section: eyebrow + h2 in a left column, content on the right
- * on wide screens; stacked on mobile.
+ * Standard page section with eyebrow + heading. Sections alternate surface
+ * tones and are separated by hairline borders for rhythm.
  */
-export function Section({ id, eyebrow, title, lead, children, className }: SectionProps) {
+export function Section({
+  id,
+  eyebrow,
+  title,
+  lead,
+  layout = "split",
+  surface = "base",
+  children,
+  className,
+}: SectionProps) {
+  const header = (
+    <header className={cn(layout === "split" && "md:sticky md:top-24 md:self-start")}>
+      <p className="font-mono text-xs tracking-wide text-fg-faint">{eyebrow}</p>
+      <h2
+        id={`${id}-title`}
+        className="mt-2 text-3xl font-semibold tracking-tight text-fg sm:text-4xl"
+      >
+        {title}
+      </h2>
+      {lead ? <p className="mt-3 max-w-md text-sm leading-relaxed text-fg-muted">{lead}</p> : null}
+    </header>
+  );
+
   return (
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className={cn("border-t border-border py-16 sm:py-24", className)}
+      className={cn(
+        "border-t border-border py-20 sm:py-28",
+        surface === "subtle" && "bg-bg-subtle",
+        className,
+      )}
     >
       <Container>
         <Reveal>
-          <div className="grid gap-8 md:grid-cols-[200px_1fr] md:gap-12 lg:grid-cols-[240px_1fr]">
-            <header className="md:sticky md:top-24 md:self-start">
-              <p className="font-mono text-xs tracking-wide text-fg-faint">{eyebrow}</p>
-              <h2
-                id={`${id}-title`}
-                className="mt-2 text-xl font-semibold tracking-tight text-fg sm:text-2xl"
-              >
-                {title}
-              </h2>
-              {lead ? <p className="mt-3 text-sm leading-relaxed text-fg-muted">{lead}</p> : null}
-            </header>
-            <div className="min-w-0">{children}</div>
-          </div>
+          {layout === "split" ? (
+            <div className="grid gap-10 md:grid-cols-[220px_1fr] md:gap-14 lg:grid-cols-[260px_1fr]">
+              {header}
+              <div className="min-w-0">{children}</div>
+            </div>
+          ) : (
+            <div>
+              {header}
+              <div className="mt-10 min-w-0 sm:mt-14">{children}</div>
+            </div>
+          )}
         </Reveal>
       </Container>
     </section>
