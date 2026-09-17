@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
@@ -71,11 +72,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
+
         <Navbar showResume={showResume} />
+
         <main id="main" className="flex-1">
           {children}
         </main>
+
         <Footer />
+
+        <Analytics />
       </body>
     </html>
   );

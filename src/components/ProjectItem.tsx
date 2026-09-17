@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui/Badge";
-import { ArrowRightIcon, ArrowUpRightIcon, GitHubIcon } from "./ui/Icons";
+import { ArrowRightIcon, GitHubIcon } from "./ui/Icons";
 
 export const statusLabel: Record<Project["status"], string> = {
   active: "In development",
@@ -79,7 +79,7 @@ export function ProjectItem({ project }: { project: Project }) {
 export function ProjectLinks({ project, className }: { project: Project; className?: string }) {
   const href = `/projects/${project.slug}`;
   return (
-    <div className={cn("mt-6 flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-3 text-sm", className)}>
+    <div className={cn("mt-6 flex min-w-0 items-center justify-between gap-4 text-sm", className)}>
       <Link
         href={href}
         className="group/link inline-flex items-center gap-1.5 font-medium text-fg transition-colors hover:text-accent"
@@ -92,11 +92,11 @@ export function ProjectLinks({ project, className }: { project: Project; classNa
           href={project.github}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-w-0 max-w-full items-center gap-1.5 font-mono text-xs text-fg-muted transition-colors hover:text-fg"
+          aria-label="View GitHub repository"
+          title="GitHub Repository"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-fg-muted transition-colors hover:border-border-strong hover:bg-bg-subtle hover:text-fg"
         >
-          <GitHubIcon className="h-3.5 w-3.5 shrink-0" />
-          <span className="truncate">{repoPath(project.github)}</span>
-          <ArrowUpRightIcon className="h-3 w-3 shrink-0 text-fg-faint" />
+          <GitHubIcon className="h-4 w-4" />
         </a>
       ) : (
         <span className="font-mono text-xs text-fg-faint">source not public</span>
